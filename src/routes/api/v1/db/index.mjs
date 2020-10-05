@@ -13,14 +13,6 @@ export default async (fastify, options, next) => {
     var size = (await fs.stat(path.resolve('./dump.rdb'))).size
     var size_formatted = formatBytes(size)
     var size_age = new Date().getTime()
-    console.log({
-        keys,
-        keys_age,
-        keys_formatted,
-        size,
-        size_formatted,
-        size_age
-    })
     fastify.route({
         method: 'GET',
         url: '/size',

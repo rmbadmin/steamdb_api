@@ -43,7 +43,6 @@ export default (fastify, options, next) => {
                     }), //default is a=>a
                     tagValueProcessor: (val, tagName) => he.decode(val), //default is a=>a
                 })
-                console.log(json)
                 if (!json.profile && json.response) return res.callNotFound()
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
@@ -70,7 +69,6 @@ export default (fastify, options, next) => {
             }
         },
         handler: async (req, res) => {
-
             var user = await fastify.redis.get(`user:${req.params.id}`)
             if (user) user = JSON.parse(user)
             if (!user || ((new Date().getTime() - user.last_requested) > 2 * 24 * 60 * 60 * 1000)) {
@@ -94,7 +92,6 @@ export default (fastify, options, next) => {
                     }), //default is a=>a
                     tagValueProcessor: (val, tagName) => he.decode(val), //default is a=>a
                 })
-                console.log(json)
                 if (!json.profile && json.response) return res.callNotFound()
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
@@ -102,12 +99,10 @@ export default (fastify, options, next) => {
             }
             var size = req.query.size || 'medium'
             if (_fs.existsSync(path.resolve(`./avatars/${user.steamID64}_${size}.jpg`))) {
-                console.log('exists')
                 var stat = await fs.stat(path.resolve(`./avatars/${user.steamID64}_${size}.jpg`))
                 var age = stat.mtime || stat.ctime
                 age = (new Date().getTime() - age.getTime())
                 if (age > 2 * 24 * 60 * 60 * 1000) {
-                    console.log('old')
                     var url = ''
                     if (size == 'small') {
                         url = user.avatarIcon
@@ -124,7 +119,6 @@ export default (fastify, options, next) => {
                     res.sendFile(`${user.steamID64}_${size}.jpg`, path.resolve(`./avatars/`))
                 }
             } else {
-                console.log('doesnt exist');
                 var url = ''
                 if (size == 'small') {
                     url = user.avatarIcon
