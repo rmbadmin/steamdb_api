@@ -10,4 +10,4 @@ module.exports = {
             "PORT": 3009,
         }
     }]
-}
+};
