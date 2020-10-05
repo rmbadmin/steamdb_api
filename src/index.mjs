@@ -5,9 +5,6 @@ import dotenv from 'dotenv'
 import _fs from 'fs'
 dotenv.config()
 const fastify = _fastify({
-    logger: {
-        level: 'debug'
-    },
     ignoreTrailingSlash: true,
 })
 fastify.addHook('onRequest', (req, res, next) => {
@@ -60,6 +57,12 @@ fastify.register(import('fastify-oas'), {
                 name: 'Packages'
             },
             {
+                name: 'Changelogs'
+            },
+            {
+                name: 'Users'
+            },
+            {
                 name: 'DB'
             }
         ],
@@ -76,7 +79,7 @@ fastify.addHook('onReady', (done) => {
     done()
 })
 fastify.register(import('./routes/index.mjs'))
-fastify.listen(process.env.PORT || 3000, '0.0.0.0')
+fastify.listen(process.env.PORT || 3000, '0.0.0.0').then(e => console.log(`Listening On ${e}`))
 if (!_fs.existsSync(path.resolve('./avatars'))) await fs.mkdir(path.resolve('./avatars'))
 
 function formatBytes(a, b = 2) {
