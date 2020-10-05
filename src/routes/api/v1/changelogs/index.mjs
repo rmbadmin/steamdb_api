@@ -4,11 +4,11 @@
  * @param {Function} next
  */
 export default async (fastify, options, next) => {
-    var changelog_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:*:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:(app|package):([0-9]{0,100}):([0-9]{0,100})/)[3]).sort((a, b) => Number(a) - Number(b)))]
+    var changelog_cache = []
     var changelog_cache_age = new Date().getTime()
-    var changelog_apps_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:app:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:app:([0-9]{0,100}):([0-9]{0,100})/)[2]).sort((a, b) => Number(a) - Number(b)))]
+    var changelog_apps_cache = []
     var changelog_apps_cache_age = new Date().getTime()
-    var changelog_packages_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:package:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:package:([0-9]{0,100}):([0-9]{0,100})/)[2]).sort((a, b) => Number(a) - Number(b)))]
+    var changelog_packages_cache = []
     var changelog_packages_cache_age = new Date().getTime()
     fastify.route({
         method: 'GET',
@@ -139,4 +139,7 @@ export default async (fastify, options, next) => {
         }
     })
     next()
+    changelog_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:*:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:(app|package):([0-9]{0,100}):([0-9]{0,100})/)[3]).sort((a, b) => Number(a) - Number(b)))]
+    changelog_apps_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:app:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:app:([0-9]{0,100}):([0-9]{0,100})/)[2]).sort((a, b) => Number(a) - Number(b)))]
+    changelog_packages_cache = [...new Set((await fastify.redis.scan(0, 'MATCH', 'changelog:package:*:*', 'COUNT', 99999999))[1].map(e => e.match(/changelog:package:([0-9]{0,100}):([0-9]{0,100})/)[2]).sort((a, b) => Number(a) - Number(b)))]
 }

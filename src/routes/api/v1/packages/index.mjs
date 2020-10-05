@@ -4,7 +4,7 @@
  * @param {Function} next
  */
 export default async (fastify, options, next) => {
-    var package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
+    var package_cache = []
     var package_cache_age = new Date().getTime()
     fastify.route({
         method: 'GET',
@@ -129,4 +129,5 @@ export default async (fastify, options, next) => {
         }
     })
     next()
+    package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
