@@ -2,6 +2,7 @@ import _fastify from 'fastify'
 import path from 'path'
 import fs from 'fs/promises'
 import dotenv from 'dotenv'
+import _fs from 'fs'
 dotenv.config()
 const fastify = _fastify({
     logger: {
@@ -24,6 +25,7 @@ fastify.addHook('onSend', async (req, res, payload) => {
 fastify.register(import('fastify-reply-from'), {
     base: 'http://arc.io/'
 })
+fastify.register(import('fastify-fetch'))
 fastify.register(import('fastify-redis'), {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
@@ -75,6 +77,7 @@ fastify.addHook('onReady', (done) => {
 })
 fastify.register(import('./routes/index.mjs'))
 fastify.listen(process.env.PORT || 3000, '0.0.0.0')
+if (!_fs.existsSync(path.resolve('./avatars'))) await fs.mkdir(path.resolve('./avatars'))
 
 function formatBytes(a, b = 2) {
     if (0 === a) return "0 Bytes";
