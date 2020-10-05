@@ -13,6 +13,7 @@ export default (fastify, options, next) => {
         method: 'GET',
         url: '/:id',
         schema: {
+            tags: ['Users'],
             params: {
                 id: {
                     type: 'string'
@@ -56,6 +57,7 @@ export default (fastify, options, next) => {
         method: 'GET',
         url: '/:id/avatar.jpg',
         schema: {
+            tags: ['Users'],
             params: {
                 id: {
                     type: 'string'
