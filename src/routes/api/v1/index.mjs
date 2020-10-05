@@ -19,5 +19,8 @@ export default (fastify, options, next) => {
     fastify.register(import('./users/index.mjs'), {
         prefix: '/users'
     })
+    fastify.register(import('./changelogs/index.mjs'), {
+        prefix: '/changelogs'
+    })
     next()
 }
