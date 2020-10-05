@@ -7,7 +7,7 @@ import formatNumber from 'short-number'
  * @param {Function} next
  */
 export default async (fastify, options, next) => {
-    var keys = (await fastify.redis.scan(0, 'MATCH', '*', 'COUNT', 99999999))[1].length
+    var keys = await fastify.redis.dbsize()
     var keys_age = new Date().getTime()
     var keys_formatted = formatNumber(keys)
     var size = (await fs.stat(path.resolve('./dump.rdb'))).size
@@ -62,7 +62,7 @@ export default async (fastify, options, next) => {
         handler: async (req, res) => {
             if ((new Date().getTime() - keys_age) > 4 * 60 * 1000) {
                 res.type('application/json').send(`{"keys":${keys},"formatted":"${keys_formatted}"}`)
-                keys = (await fastify.redis.scan(0, 'MATCH', '*', 'COUNT', 999999999999))[1].length
+                keys = await fastify.redis.dbsize()
                 keys_age = new Date().getTime()
                 keys_formatted = formatNumber(keys)
             } else {
