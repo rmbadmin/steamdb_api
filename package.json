@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "dev": "nodemon src/index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "fastify": "^3.4.1",
+    "fastify-oas": "3.0.3",
+    "fastify-redis": "^4.0.3",
+    "fastify-reply-from": "^3.3.0",
+    "fastify-static": "^3.2.0",
+    "fastify-websocket": "^2.0.7",
+    "short-number": "^1.0.7"
+  }
+}
