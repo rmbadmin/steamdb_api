@@ -16,41 +16,10 @@ export default (fastify, options, next) => {
             url.pathname = url.pathname.slice('/api/v1/realtime'.length)
             if (url.pathname.endsWith('/') && url.pathname !== '/') url.pathname = url.pathname.slice(0, -1)
             if (url.pathname == '/') {
-                conn.socket.data = {
-                    type: 'all',
-                }
                 conn.socket.send(JSON.stringify({
                     event: "CONNECTED",
                     data: {
-                        ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress,
-                        type: 'all',
-                        id: 'all'
-                    }
-                }))
-            } else if (url.pathname == '/apps') {
-                conn.socket.data = {
-                    type: 'apps',
-                    id: [...new Set((url.searchParams.get('id') || 'all').split(','))]
-                }
-                conn.socket.send(JSON.stringify({
-                    event: "CONNECTED",
-                    data: {
-                        ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress,
-                        type: conn.socket.data.type,
-                        id: conn.socket.data.id[0] == 'all' ? 'all' : conn.socket.data.id
-                    }
-                }))
-            } else if (url.pathname == '/packages') {
-                conn.socket.data = {
-                    type: 'packages',
-                    id: [...new Set((url.searchParams.get('id') || 'all').split(','))]
-                }
-                conn.socket.send(JSON.stringify({
-                    event: "CONNECTED",
-                    data: {
-                        ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress,
-                        type: conn.socket.data.type,
-                        id: conn.socket.data.id[0] == 'all' ? 'all' : conn.socket.data.id
+                        ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress
                     }
                 }))
             } else {
@@ -64,17 +33,8 @@ export default (fastify, options, next) => {
     fastify.redis.listener.on('message', (channel, message) => {
         switch (channel) {
             case 'STEAM_DB:UPDATE':
-                var og = `${message}`;
-                message = JSON.parse(message);
-                [...fastify.websocketServer.clients].filter(socket => socket.data.type == 'all').forEach(async socket => {
-                    socket.send(`{"event":"UPDATE","data":${og}}`)
-                })
-                var types = [...fastify.websocketServer.clients].filter(socket => socket.data.type == message.type)
-                types.filter(socket => socket.data.id[0] == 'all').forEach(async socket => {
-                    socket.send(`{"event":"UPDATE","data":${og}}`)
-                })
-                types.filter(socket => socket.data.id.indexOf(message.id) != -1).forEach(async socket => {
-                    socket.send(`{"event":"UPDATE","data":${og}}`)
+                fastify.websocketServer.clients.forEach(socket => {
+                    socket.send(`{"event":"UPDATE","data":${message}}`)
                 })
                 break;
             case 'STEAM_DB:BOT_LOGIN':
