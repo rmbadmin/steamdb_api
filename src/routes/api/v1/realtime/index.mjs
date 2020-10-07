@@ -67,16 +67,13 @@ export default (fastify, options, next) => {
                 var og = `${message}`;
                 message = JSON.parse(message);
                 [...fastify.websocketServer.clients].filter(socket => socket.data.type == 'all').forEach(async socket => {
-                    (socket.data)
                     socket.send(`{"event":"UPDATE","data":${og}}`)
                 })
                 var types = [...fastify.websocketServer.clients].filter(socket => socket.data.type == message.type)
                 types.filter(socket => socket.data.id[0] == 'all').forEach(async socket => {
-                    (socket.data)
                     socket.send(`{"event":"UPDATE","data":${og}}`)
                 })
                 types.filter(socket => socket.data.id.indexOf(message.id) != -1).forEach(async socket => {
-                    (socket.data)
                     socket.send(`{"event":"UPDATE","data":${og}}`)
                 })
                 break;
