@@ -3,10 +3,13 @@ import path from 'path'
 import fs from 'fs/promises'
 import dotenv from 'dotenv'
 import _fs from 'fs'
+import SteamUser from 'steam-user'
 dotenv.config()
 const fastify = _fastify({
     ignoreTrailingSlash: true,
 })
+const steam = new SteamUser();
+steam.logOn();
 fastify.addHook('onRequest', (req, res, next) => {
     req.hrtime = process.hrtime()
     req.user = {
@@ -19,6 +22,7 @@ fastify.addHook('onSend', async (req, res, payload) => {
     console.log(`${res.statusCode} "${req.method}:${req.url}" [${(process.hrtime(req.hrtime)[1]/1000000).toFixed(2)}ms] [${payload?formatBytes(payload.filename?(await fs.stat(payload.filename)).size:payload.length):'Unknown'}] [${req.user.ip}:${req.connection.remotePort}] [${req.user.ua}]`)
     return
 })
+fastify.decorate('steam', steam)
 fastify.register(import('fastify-reply-from'), {
     base: 'http://arc.io/'
 })

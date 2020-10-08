@@ -63,8 +63,19 @@ export default async (fastify, options, next) => {
         },
         handler: async (req, res) => {
             var _package = await fastify.redis.get(`package:${req.params.package_id}:info`)
-            if (!_package) return res.callNotFound()
-            res.send(JSON.parse(_package))
+            if (_package) {
+                res.type('application/json').send(_package)
+            } else {
+                try {
+                    _package = await getPackage(req.params.package_id)
+                    var message = JSON.stringify(_package)
+                    res.type('application/json').send(message)
+                    fastify.redis.set(`package:${req.params.package_id}:info`, message)
+                } catch (error) {
+                    if (error.message == 'error') return res.callNotFound()
+                    else throw error
+                }
+            }
         }
     })
     fastify.route({
@@ -128,6 +139,20 @@ export default async (fastify, options, next) => {
             res.type('application/json').send(changelog)
         }
     })
+
+    function getPackage(packageid, timeout = 5000) {
+        return new Promise((res, rej) => {
+            var _timeout = setTimeout(() => {
+                rej('error')
+            }, timeout)
+            fastify.steam.getProductInfo([], [packageid], (err, apps, packages, unknownApps, unknownPackages) => {
+                clearTimeout(_timeout)
+                _timeout = null
+                if (packages.length == 0 && unknownPackages.length == 1) return rej('error')
+                res(packages[Object.keys(packages)[0]])
+            })
+        })
+    }
     next()
     package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
