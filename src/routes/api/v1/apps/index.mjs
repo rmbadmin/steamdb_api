@@ -31,7 +31,7 @@ export default async (fastify, options, next) => {
         handler: async (req, res) => {
             var app = await fastify.redis.get(`app:${req.params.app_id}:info`)
             if (!app) return res.callNotFound()
-            res.type('application/json').send(app)
+            res.type('application/json').send(`${app}`)
         }
     })
     fastify.route({
@@ -90,7 +90,7 @@ export default async (fastify, options, next) => {
         handler: async (req, res) => {
             var changelog = await fastify.redis.get(`changelog:app:${req.params.app_id}:${req.params.changelog_id}`)
             if (!changelog) return res.callNotFound()
-            res.send(JSON.parse(changelog))
+            res.type('application/json').send(`${changelog}`)
         }
     })
     next()

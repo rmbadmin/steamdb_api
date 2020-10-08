@@ -5,6 +5,9 @@ import dotenv from 'dotenv'
 import _fs from 'fs'
 dotenv.config()
 const fastify = _fastify({
+    logger: {
+        level: 'debug'
+    },
     ignoreTrailingSlash: true,
 })
 fastify.addHook('onRequest', (req, res, next) => {
