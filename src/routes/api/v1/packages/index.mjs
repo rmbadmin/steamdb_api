@@ -3,7 +3,8 @@
  * @param {object} options 
  * @param {Function} next
  */
-export default async (fastify, options, next) => {
+
+var fn = async (fastify, options, next) => {
     var package_cache = []
     var package_cache_age = new Date().getTime()
     fastify.route({
@@ -139,6 +140,7 @@ export default async (fastify, options, next) => {
             res.type('application/json').send(changelog)
         }
     })
+    next()
 
     function getPackage(packageid, timeout = 5000) {
         return new Promise((res, rej) => {
@@ -153,6 +155,7 @@ export default async (fastify, options, next) => {
             })
         })
     }
-    next()
     package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
+fn[Symbol.for('fastify.display-name')] = 'packages'
+export default = fn
