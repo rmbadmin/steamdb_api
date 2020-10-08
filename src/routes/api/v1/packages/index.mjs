@@ -3,8 +3,7 @@
  * @param {object} options 
  * @param {Function} next
  */
-
-var fn = async (fastify, options, next) => {
+export default async (fastify, options, next) => {
     var package_cache = []
     var package_cache_age = new Date().getTime()
     fastify.route({
@@ -67,15 +66,17 @@ var fn = async (fastify, options, next) => {
             if (_package) {
                 res.type('application/json').send(_package)
             } else {
-                try {
-                    _package = await getPackage(req.params.package_id)
-                    var message = JSON.stringify(_package)
-                    res.type('application/json').send(message)
-                    fastify.redis.set(`package:${req.params.package_id}:info`, message)
-                } catch (error) {
-                    if (error.message == 'error') return res.callNotFound()
-                    else throw error
-                }
+                return res.callNotFound()
+                /*                try {
+                        _package = await getPackage(req.params.package_id)
+                        var message = JSON.stringify(_package)
+                        res.type('application/json').send(message)
+                        fastify.redis.set(`package:${req.params.package_id}:info`, message)
+                    } catch (error) {
+                        if (error.message == 'error') return res.callNotFound()
+                        else throw error
+                    }
+                }*/
             }
         }
     })
@@ -142,7 +143,7 @@ var fn = async (fastify, options, next) => {
     })
     next()
 
-    function getPackage(packageid, timeout = 5000) {
+    /*function getPackage(packageid, timeout = 5000) {
         return new Promise((res, rej) => {
             var _timeout = setTimeout(() => {
                 rej('error')
@@ -154,8 +155,6 @@ var fn = async (fastify, options, next) => {
                 res(packages[Object.keys(packages)[0]])
             })
         })
-    }
+    }*/
     package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
-fn[Symbol.for('fastify.display-name')] = 'packages'
-export default = fn
