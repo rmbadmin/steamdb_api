@@ -4,39 +4,6 @@
  * @param {Function} next
  */
 export default async (fastify, options, next) => {
-    var package_cache = []
-    var package_cache_age = new Date().getTime()
-    fastify.route({
-        method: 'GET',
-        url: '/',
-        schema: {
-            tags: ['Packages'],
-            response: {
-                200: {
-                    apps: {
-                        type: 'array',
-                        items: {
-                            type: 'string',
-                            example: 'package.id'
-                        }
-                    },
-                    count: {
-                        type: 'number',
-                        example: 1
-                    }
-                }
-            }
-        },
-        handler: async (req, res) => {
-            if ((new Date().getTime() - package_cache_age) > 4 * 60 * 1000) {
-                res.type('application/json').send(`{"packages":${JSON.stringify(package_cache)},"count":${package_cache.length}}`)
-                package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
-                package_cache_age = new Date().getTime()
-            } else {
-                res.type('application/json').send(`{"packages":${JSON.stringify(package_cache)},"count":${package_cache.length}}`)
-            }
-        }
-    })
     fastify.route({
         method: 'GET',
         url: '/:package_id',
@@ -129,5 +96,4 @@ export default async (fastify, options, next) => {
         }
     })
     next()
-    package_cache = (await fastify.redis.scan(0, 'MATCH', 'package:*:info', 'COUNT', 99999999))[1].map(e => e.match(/package:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }

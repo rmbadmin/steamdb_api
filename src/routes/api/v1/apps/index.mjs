@@ -4,45 +4,6 @@
  * @param {Function} next
  */
 export default async (fastify, options, next) => {
-    var app_cache = []
-    var app_cache_age = new Date().getTime()
-    fastify.route({
-        method: 'GET',
-        url: '/',
-        schema: {
-            tags: ['Apps'],
-            response: {
-                200: {
-                    apps: {
-                        type: 'array',
-                        items: {
-                            type: 'string',
-                            example: 'app.id'
-                        }
-                    },
-                    count: {
-                        type: 'number',
-                        example: 1
-                    }
-                }
-            }
-        },
-        handler: async (req, res) => {
-            if ((new Date().getTime() - app_cache_age) > 4 * 60 * 1000) {
-                res.send({
-                    apps: app_cache,
-                    count: app_cache.length
-                })
-                app_cache = (await fastify.redis.scan(0, 'MATCH', 'app:*:info', 'COUNT', 99999999))[1].map(e => e.match(/app:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
-                app_cache_age = new Date().getTime()
-            } else {
-                res.send({
-                    apps: app_cache,
-                    count: app_cache.length
-                })
-            }
-        }
-    })
     fastify.route({
         method: 'GET',
         url: '/:app_id',
@@ -133,5 +94,4 @@ export default async (fastify, options, next) => {
         }
     })
     next()
-    app_cache = (await fastify.redis.scan(0, 'MATCH', 'app:*:info', 'COUNT', 99999999))[1].map(e => e.match(/app:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
