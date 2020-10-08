@@ -4,12 +4,12 @@ import fs from 'fs/promises'
 import dotenv from 'dotenv'
 import _fs from 'fs'
 import SteamUser from 'steam-user'
+const steam = new SteamUser();
+steam.logOn();
 dotenv.config()
 const fastify = _fastify({
     ignoreTrailingSlash: true,
 })
-const steam = new SteamUser();
-steam.logOn();
 fastify.addHook('onRequest', (req, res, next) => {
     req.hrtime = process.hrtime()
     req.user = {
