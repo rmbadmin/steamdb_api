@@ -1,10 +1,9 @@
-import crypto from 'crypto'
 /**
  * @param {import("fastify").FastifyInstance} fastify 
  * @param {object} options 
  * @param {Function} next
  */
-var fn = async (fastify, options, next) => {
+export default async (fastify, options, next) => {
     var app_cache = []
     var app_cache_age = new Date().getTime()
     fastify.route({
@@ -70,19 +69,8 @@ var fn = async (fastify, options, next) => {
         },
         handler: async (req, res) => {
             var app = await fastify.redis.get(`app:${req.params.app_id}:info`)
-            if (app) {
-                res.type('application/json').send(app)
-            } else {
-                try {
-                    app = await getApp(req.params.app_id)
-                    var message = JSON.stringify(app)
-                    res.type('application/json').send(message)
-                    fastify.redis.set(`package:${req.params.app_id}:info`, message)
-                } catch (error) {
-                    if (error.message == 'error') return res.callNotFound()
-                    else throw error
-                }
-            }
+            if (!app) return res.callNotFound()
+            res.type('application/json').send(app)
         }
     })
     fastify.route({
@@ -145,21 +133,5 @@ var fn = async (fastify, options, next) => {
         }
     })
     next()
-
-    function getApp(appid, timeout = 5000) {
-        return new Promise((res, rej) => {
-            var _timeout = setTimeout(() => {
-                rej('error')
-            }, timeout)
-            fastify.steam.getProductInfo([appid], [], (err, apps, packages, unknownApps, unknownPackages) => {
-                clearTimeout(_timeout)
-                _timeout = null
-                if (apps.length == 0 && unknownApps.length == 1) return rej('error')
-                res(apps[Object.keys(apps)[0]])
-            })
-        })
-    }
     app_cache = (await fastify.redis.scan(0, 'MATCH', 'app:*:info', 'COUNT', 99999999))[1].map(e => e.match(/app:([0-9]{0,100}):info/)[1]).sort((a, b) => Number(a) - Number(b))
 }
-fn[Symbol.for('fastify.display-name')] = 'apps'
-export default = fn
