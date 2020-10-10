@@ -11,6 +11,9 @@ export default async (fastify, options, next) => {
     fastify.route({
         method: 'GET',
         url: '/collection/:id',
+        schema: {
+            tags: ['Workshop']
+        },
         handler: async (req, res) => {
             var invalid = await fastify.redis.get(`workshop:collection:${req.params.id}:invalid`)
             if (invalid) return res.callNotFound()
@@ -47,6 +50,9 @@ export default async (fastify, options, next) => {
     fastify.route({
         method: 'GET',
         url: '/item/:id',
+        schema: {
+            tags: ['Workshop']
+        },
         handler: async (req, res) => {
             var invalid = await fastify.redis.get(`workshop:item:${req.params.id}:invalid`)
             if (invalid) return res.callNotFound()

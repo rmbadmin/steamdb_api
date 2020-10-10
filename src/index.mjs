@@ -66,6 +66,9 @@ fastify.register(import('fastify-oas'), {
                 name: 'Users'
             },
             {
+                name: 'Workshop'
+            },
+            {
                 name: 'DB'
             }
         ],
