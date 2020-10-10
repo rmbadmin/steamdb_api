@@ -22,6 +22,7 @@
     "fastify-websocket": "^2.0.7",
     "he": "^1.2.0",
     "node-fetch": "^2.6.1",
-    "short-number": "^1.0.7"
+    "short-number": "^1.0.7",
+    "steam-workshop": "0.0.5"
   }
 }
