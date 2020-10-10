@@ -165,6 +165,7 @@ export default (fastify, options, next) => {
                         url = user.avatarFull
                     }
                     var resp = await fastify.fetch(url)
+                    console.log(resp.status)
                     if (resp.status == 404) return res.callNotFound()
                     var image = await resp.buffer()
                     await fs.writeFile(path.resolve(`./avatars/${user.steamID64}_${size}.jpg`), image)
@@ -182,6 +183,7 @@ export default (fastify, options, next) => {
                     url = user.avatarFull
                 }
                 var resp = await fastify.fetch(url)
+                console.log(resp.status)
                 if (resp.status == 404) return res.callNotFound()
                 var image = await resp.buffer()
                 await fs.writeFile(path.resolve(`./avatars/${user.steamID64}_${size}.jpg`), image)
