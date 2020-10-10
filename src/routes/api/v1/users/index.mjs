@@ -74,7 +74,7 @@ export default (fastify, options, next) => {
                 }
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
-                if (json.profile.customURL && (json.profile.customURL.length != 0)) await fastify.redis.set(`user:${json.profile.customURL}:customURL`, json.profile.steamID64)
+                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL||req.params.id}:customURL`, json.profile.steamID64)
                 user = json.profile
             }
             delete user.last_requested
@@ -122,9 +122,32 @@ export default (fastify, options, next) => {
                     }), //default is a=>a
                     tagValueProcessor: (val, tagName) => he.decode(val), //default is a=>a
                 })
-                if (!json.profile && json.response) return res.callNotFound()
+                if (!json.profile && json.response) {
+                    var resp = await fastify.fetch(`https://steamcommunity.com/id/${(user?user.customURL:null)||req.params.id}?xml=1`)
+                    var json = parser.parse(await resp.text(), {
+                        attributeNamePrefix: "@_",
+                        attrNodeName: "attr", //default is 'false'
+                        textNodeName: "#text",
+                        ignoreAttributes: true,
+                        ignoreNameSpace: false,
+                        allowBooleanAttributes: false,
+                        parseNodeValue: true,
+                        parseAttributeValue: false,
+                        trimValues: true,
+                        cdataTagName: "", //default is 'false'
+                        cdataPositionChar: "\\c",
+                        parseTrueNumberOnly: true,
+                        arrayMode: false, //"strict"
+                        attrValueProcessor: (val, attrName) => he.decode(val, {
+                            isAttributeValue: true
+                        }), //default is a=>a
+                        tagValueProcessor: (val, tagName) => he.decode(val), //default is a=>a
+                    })
+                    if (!json.profile && json.response) return res.callNotFound()
+                }
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
+                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL||req.params.id}:customURL`, json.profile.steamID64)
                 user = json.profile
             }
             var size = req.query.size || 'medium'
