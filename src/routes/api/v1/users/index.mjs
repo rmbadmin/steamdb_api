@@ -74,7 +74,7 @@ export default (fastify, options, next) => {
                 }
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
-                if (json.profile.customURL.length != 0) await fastify.redis.set(`user:${json.profile.customURL}:customURL`, json.profile.steamID64)
+                if (json.profile.customURL && (json.profile.customURL.length != 0)) await fastify.redis.set(`user:${json.profile.customURL}:customURL`, json.profile.steamID64)
                 user = json.profile
             }
             delete user.last_requested
