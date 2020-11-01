@@ -1,6 +1,5 @@
 import SteamWorkshop from 'steam-workshop'
 import path from 'path'
-import fs from 'fs'
 const steamWorkshop = new SteamWorkshop(path.resolve('./temp'))
 /**
  * @param {import("fastify").FastifyInstance} fastify 

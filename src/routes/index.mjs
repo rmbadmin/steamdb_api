@@ -1,5 +1,3 @@
-import fastifyRedis from "fastify-redis"
-
 /**
  * @param {import("fastify").FastifyInstance} fastify 
  * @param {object} options 

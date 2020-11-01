@@ -1,5 +1,3 @@
-import fs from 'fs/promises'
-import path from 'path'
 /**
  * @param {import("fastify").FastifyInstance} fastify 
  * @param {object} options 
