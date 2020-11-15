@@ -29,17 +29,16 @@ export default (fastify, options, next) => {
             }
             if (user) user = JSON.parse(user)
             if (!user || ((new Date().getTime() - user.last_requested) > 2 * 24 * 60 * 60 * 1000)) {
-                var resp = await fastify.fetch(`https://steamcommunity.com/profiles/${(user?user.steamID64:null)||req.params.id}?xml=1`)
-                var json =  parseXML(await resp.text())
+                var resp = await fastify.fetch(`https://steamcommunity.com/profiles/${(user ? user.steamID64 : null) || req.params.id}?xml=1`)
+                var json = parseXML(await resp.text())
                 if (!json.profile && json.response) {
-                    var resp = await fastify.fetch(`https://steamcommunity.com/id/${(user?user.customURL:null)||req.params.id}?xml=1`)
-                   
+                    var resp = await fastify.fetch(`https://steamcommunity.com/id/${(user ? user.customURL : null) || req.params.id}?xml=1`)
                     var json = parseXML(await resp.text())
                     if (!json.profile && json.response) return res.callNotFound()
                 }
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
-                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL||req.params.id}:customURL`, json.profile.steamID64)
+                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL || req.params.id}:customURL`, json.profile.steamID64)
                 user = json.profile
             }
             delete user.last_requested
@@ -67,16 +66,16 @@ export default (fastify, options, next) => {
             var user = await fastify.redis.get(`user:${req.params.id}`)
             if (user) user = JSON.parse(user)
             if (!user || ((new Date().getTime() - user.last_requested) > 2 * 24 * 60 * 60 * 1000)) {
-                var resp = await fastify.fetch(`https://steamcommunity.com/profiles/${(user?user.steamID64:null)||req.params.id}?xml=1`)
-                var json =  parseXML(await resp.text())
+                var resp = await fastify.fetch(`https://steamcommunity.com/profiles/${(user ? user.steamID64 : null) || req.params.id}?xml=1`)
+                var json = parseXML(await resp.text())
                 if (!json.profile && json.response) {
-                    var resp = await fastify.fetch(`https://steamcommunity.com/id/${(user?user.customURL:null)||req.params.id}?xml=1`)
+                    var resp = await fastify.fetch(`https://steamcommunity.com/id/${(user ? user.customURL : null) || req.params.id}?xml=1`)
                     var json = parseXML(await resp.text())
                     if (!json.profile && json.response) return res.callNotFound()
                 }
                 json.profile.last_requested = new Date().getTime()
                 await fastify.redis.set(`user:${json.profile.steamID64}`, JSON.stringify(json.profile))
-                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL||req.params.id}:customURL`, json.profile.steamID64)
+                if ((req.params.id !== json.profile.steamID64) || (json.profile.customURL && (json.profile.customURL.length != 0))) await fastify.redis.set(`user:${json.profile.customURL || req.params.id}:customURL`, json.profile.steamID64)
                 user = json.profile
             }
             var size = req.query.size || 'medium'
@@ -86,7 +85,7 @@ export default (fastify, options, next) => {
                 age = (new Date().getTime() - age.getTime())
                 if (age > 2 * 24 * 60 * 60 * 1000) {
                     var url = ''
-                    switch(size) {
+                    switch (size) {
                         case 'small':
                         case 'icon':
                             url = user.avatarIcon
@@ -109,7 +108,7 @@ export default (fastify, options, next) => {
                 }
             } else {
                 var url = ''
-                switch(size) {
+                switch (size) {
                     case 'small':
                     case 'icon':
                         url = user.avatarIcon

@@ -4,7 +4,7 @@
  * @param {Function} next
  */
 export default (fastify, options, next) => {
-    fastify.redis.listener.subscribe('STEAM_DB:UPDATE', 'STEAM_DB:BOT_LOGIN', 'STEAM_DB:BOT_LOGOFF', 'STEAM_DB:BOT_STARTUP', 'STEAM_DB:BOT_SHUTDOWN', () => {})
+    fastify.redis.listener.subscribe('STEAM_DB:UPDATE', 'STEAM_DB:BOT_LOGIN', 'STEAM_DB:BOT_LOGOFF', 'STEAM_DB:BOT_STARTUP', 'STEAM_DB:BOT_SHUTDOWN', () => { })
     fastify.register(import('fastify-websocket'), {
         /**
          * @param {import('fastify-websocket').SocketStream} conn
@@ -21,11 +21,11 @@ export default (fastify, options, next) => {
                         ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress
                     }
                 }))
-                conn.socket.onmessage = (_) =>{
-                    conn.socket.send(JSON.stringify({event:'PING_ACK',data:{recived_timestamp:Date.now()}}))
+                conn.socket.onmessage = (_) => {
+                    conn.socket.send(JSON.stringify({ event: 'PING_ACK', data: { recived_timestamp: Date.now() } }))
                 }
-                conn.socket.once('close',(_)=>{
-                    conn.socket.onmessage = ()=>{}
+                conn.socket.once('close', (_) => {
+                    conn.socket.onmessage = () => { }
                 })
             } else {
                 conn.socket.close()
