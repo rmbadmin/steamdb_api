@@ -25,7 +25,7 @@ export default (fastify, options, next) => {
             } else {
                 conn.socket.close()
             }
-            conn.socket.on('close', () => {
+            conn.socket.once('close', () => {
                 console.log(`101 (WS) (CLOSE) "${req.method}:${req.url}" [${req.headers['cf-connecting-ip']||req.connection.remoteAddress}:${req.connection.remotePort}] [${req.headers["user-agent"]||'NO_UA'}] `)
             })
         }
