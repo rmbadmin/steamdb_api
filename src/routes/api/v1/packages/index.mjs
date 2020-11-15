@@ -51,10 +51,8 @@ export default async (fastify, options, next) => {
         },
         handler: async (req, res) => {
             var _package = await fastify.redis.get(`package:${req.params.package_id}:info`)
-            if (!_package) return res.code(404).send(JSON.stringify({
-                message: `Package ID ${req.params.package_id} not found.`
-            }))
-            var changelogs = (await fastify.redis.scan(0, 'MATCH', `changelog:package:${req.params.package_id}:*`, 'COUNT', 99999999))[1].map(e => e.match(new RegExp(`changelog:package:${req.params.package_id}:([0-9]{0,})`))[1]).sort((a, b) => parseInt(b) - parseInt(a))
+            if (!_package) return res.callNotFound()
+            var changelogs = await fastify.redis.smembers(`package:${req.params.package_id}:changenumbers`)
             res.send(changelogs)
         }
     })

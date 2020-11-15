@@ -52,7 +52,7 @@ export default async (fastify, options, next) => {
         handler: async (req, res) => {
             var app = await fastify.redis.get(`app:${req.params.app_id}:info`)
             if (!app) return res.callNotFound()
-            var changelogs = (await fastify.redis.scan(0, 'MATCH', `changelog:app:${req.params.app_id}:*`, 'COUNT', 99999999))[1].map(e => e.match(new RegExp(`changelog:app:${req.params.app_id}:([0-9]{0,})`))[1]).sort((a, b) => parseInt(b) - parseInt(a))
+            var changelogs = await fastify.redis.smembers(`app:${req.params.app_id}:changenumbers`)
             res.send(changelogs)
         }
     })
