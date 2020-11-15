@@ -11,7 +11,6 @@ export default (fastify, options, next) => {
          * @param {import('http').IncomingMessage} req
          */
         handle: async (conn, req) => {
-            console.log(`101 (WS) (OPEN) "${req.method}:${req.url}" [${req.headers['cf-connecting-ip']||req.connection.remoteAddress}:${req.connection.remotePort}] [${req.headers["user-agent"]||'NO_UA'}] `)
             var url = new URL(`http://localhost${req.url}`)
             url.pathname = url.pathname.slice('/api/v1/realtime'.length)
             if (url.pathname.endsWith('/') && url.pathname !== '/') url.pathname = url.pathname.slice(0, -1)
@@ -25,9 +24,6 @@ export default (fastify, options, next) => {
             } else {
                 conn.socket.close()
             }
-            conn.socket.once('close', () => {
-                console.log(`101 (WS) (CLOSE) "${req.method}:${req.url}" [${req.headers['cf-connecting-ip']||req.connection.remoteAddress}:${req.connection.remotePort}] [${req.headers["user-agent"]||'NO_UA'}] `)
-            })
         }
     })
     fastify.redis.listener.on('message', (channel, message) => {
