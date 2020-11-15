@@ -21,6 +21,12 @@ export default (fastify, options, next) => {
                         ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress
                     }
                 }))
+                conn.socket.onmessage = (_) =>{
+                    conn.socket.send(JSON.stringify({event:'PING_ACK',data:{recived_timestamp:Date.now()}}))
+                }
+                conn.socket.once('close',(_)=>{
+                    conn.socket.onmessage = ()=>{}
+                })
             } else {
                 conn.socket.close()
             }
