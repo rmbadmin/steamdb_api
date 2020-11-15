@@ -48,9 +48,6 @@ fastify.register(import('fastify-oas'), {
                 name: 'Packages'
             },
             {
-                name: 'Changelogs'
-            },
-            {
                 name: 'Users'
             },
             {
