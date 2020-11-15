@@ -86,12 +86,18 @@ export default (fastify, options, next) => {
                 age = (new Date().getTime() - age.getTime())
                 if (age > 2 * 24 * 60 * 60 * 1000) {
                     var url = ''
-                    if (size == 'small') {
-                        url = user.avatarIcon
-                    } else if (size == 'medium') {
-                        url = user.avatarMedium
-                    } else if (size == 'large') {
-                        url = user.avatarFull
+                    switch(size) {
+                        case 'small':
+                        case 'icon':
+                            url = user.avatarIcon
+                            break;
+                        case 'medium':
+                            url = user.avatarMedium
+                            break;
+                        case 'large':
+                        case 'full':
+                            url = user.avatarFull
+                            break;
                     }
                     var resp = await fastify.fetch(url)
                     if (resp.status == 404) return res.callNotFound()
@@ -103,12 +109,18 @@ export default (fastify, options, next) => {
                 }
             } else {
                 var url = ''
-                if (size == 'small') {
-                    url = user.avatarIcon
-                } else if (size == 'medium') {
-                    url = user.avatarMedium
-                } else if (size == 'large') {
-                    url = user.avatarFull
+                switch(size) {
+                    case 'small':
+                    case 'icon':
+                        url = user.avatarIcon
+                        break;
+                    case 'medium':
+                        url = user.avatarMedium
+                        break;
+                    case 'large':
+                    case 'full':
+                        url = user.avatarFull
+                        break;
                 }
                 var resp = await fastify.fetch(url)
                 if (resp.status == 404) return res.callNotFound()
