@@ -16,7 +16,7 @@ module.exports = {
         prod:{
             user:'root',
             host:['hermes.trbo.sh'],
-            ref:'origin/master',
+            ref:'origin/prod',
             repo:'git@github.com:SteamDB-API/api',
             path:'/root/node/steamdb/api',
             'post-deploy':'npm i; pm2 startOrRestart ecosystem.config.js',

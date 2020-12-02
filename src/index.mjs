@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import dotenv from 'dotenv'
 import _fs from 'fs'
+import StatsD from 'hot-shots'
 dotenv.config()
 const fastify = _fastify({
     logger: {
@@ -10,6 +11,7 @@ const fastify = _fastify({
     },
     ignoreTrailingSlash: true,
 })
+fastify.decorate('stats',new StatsD())
 fastify.register(import('fastify-fetch'))
 fastify.register(import('fastify-redis'), {
     host: process.env.REDIS_HOST,
