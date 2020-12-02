@@ -78,5 +78,5 @@ fastify.addHook('onReady', (done) => {
     done()
 })
 fastify.register(import('./routes/index.mjs'))
-fastify.listen(process.env.PORT || 3000, '0.0.0.0').then(e => console.log(`Listening On ${e}`))
+fastify.listen(process.env.PORT || 3000).then(e => console.log(`Listening On ${e}`))
 if (!_fs.existsSync(path.resolve('./avatars'))) await fs.mkdir(path.resolve('./avatars'))
