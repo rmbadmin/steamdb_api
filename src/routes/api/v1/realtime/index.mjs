@@ -21,12 +21,12 @@ export default (fastify, options, next) => {
                         ip: req.headers['cf-connecting-ip'] || req.connection.remoteAddress
                     }
                 }))
-                client.increment('steamdb.realtime.clients');
+                fastify.stats.increment('steamdb.realtime.clients');
                 conn.socket.onmessage = (_) => {
                     conn.socket.send(JSON.stringify({ event: 'PING_ACK', data: { recived_timestamp: Date.now() } }))
                 }
                 conn.socket.once('close', (_) => {
-                    client.decrement('steamdb.realtime.clients');
+                    fastify.stats.decrement('steamdb.realtime.clients');
                     conn.socket.onmessage = () => { }
                 })
             } else {
