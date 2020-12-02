@@ -66,6 +66,9 @@ fastify.register(import('fastify-static'), {
     serve: true,
     prefixAvoidTrailingSlash: true,
 })
+fastify.get('/',(req,res)=>{
+    res.redirect('https://steamdb.ml')
+})
 fastify.addHook('onReady', (done) => {
     fastify.oas()
     done()
