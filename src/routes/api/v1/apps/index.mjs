@@ -39,6 +39,14 @@ export default async (fastify, options, next) => {
         url: '/:app_id/changelogs',
         schema: {
             tags: ['Apps'],
+            params: {
+                type: 'object',
+                properties: {
+                    app_id: {
+                        type: 'string'
+                    }
+                }
+            },
             response: {
                 200: {
                     type: 'array',
@@ -61,6 +69,17 @@ export default async (fastify, options, next) => {
         url: '/:app_id/changelog/:changelog_id',
         schema: {
             tags: ['Apps'],
+            params: {
+                type: 'object',
+                properties: {
+                    app_id: {
+                        type: 'string'
+                    },
+                    changelog_id: {
+                        type: 'string'
+                    }
+                }
+            },
             response: {
                 200: {
                     type: 'array',

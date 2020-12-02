@@ -11,7 +11,15 @@ export default async (fastify, options, next) => {
         method: 'GET',
         url: '/collection/:id',
         schema: {
-            tags: ['Workshop']
+            tags: ['Workshop'],
+            params: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string'
+                    }
+                }
+            },
         },
         handler: async (req, res) => {
             var invalid = await fastify.redis.get(`workshop:collection:${req.params.id}:invalid`)
@@ -50,7 +58,15 @@ export default async (fastify, options, next) => {
         method: 'GET',
         url: '/item/:id',
         schema: {
-            tags: ['Workshop']
+            tags: ['Workshop'],
+            params: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string'
+                    }
+                }
+            },
         },
         handler: async (req, res) => {
             var invalid = await fastify.redis.get(`workshop:item:${req.params.id}:invalid`)

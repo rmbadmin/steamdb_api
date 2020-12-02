@@ -39,6 +39,14 @@ export default async (fastify, options, next) => {
         url: '/:package_id/changelogs',
         schema: {
             tags: ['Packages'],
+            params: {
+                type: 'object',
+                properties: {
+                    package_id: {
+                        type: 'string'
+                    }
+                }
+            },
             response: {
                 200: {
                     type: 'array',
@@ -61,6 +69,17 @@ export default async (fastify, options, next) => {
         url: '/:package_id/changelog/:changelog_id',
         schema: {
             tags: ['Packages'],
+            params: {
+                type: 'object',
+                properties: {
+                    package_id: {
+                        type: 'string'
+                    },
+                    changelog_id: {
+                        type: 'string'
+                    }
+                }
+            },
             response: {
                 200: {
                     type: 'array',
