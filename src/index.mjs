@@ -10,9 +10,6 @@ const fastify = _fastify({
     },
     ignoreTrailingSlash: true,
 })
-fastify.register(import('fastify-reply-from'), {
-    base: 'http://arc.io/'
-})
 fastify.register(import('fastify-fetch'))
 fastify.register(import('fastify-redis'), {
     host: process.env.REDIS_HOST,
@@ -30,12 +27,12 @@ fastify.register(import('fastify-oas'), {
         info: {
             title: 'SteamDB API',
             description: 'Documentation for the SteamDB API<br><a href="/docs/websockets">Websocket Documentation</a>',
-            version: '2.0.0',
+            version: '1.2.0',
         },
         consumes: ['application/json'],
         produces: ['application/json'],
         servers: [{
-            url: 'https://steamdb.ml',
+            url: 'https://api.steamdb.ml',
             description: 'Offical SteamDB Server'
         }, {
             url: 'http://localhost:3000',
@@ -58,7 +55,11 @@ fastify.register(import('fastify-oas'), {
             }
         ],
     },
-    exposeRoute: true
+    exposeRoute: {
+        ui:false,
+        json:true,
+        yaml:true
+    }
 })
 fastify.register(import('fastify-static'), {
     root: path.resolve('./views'),
