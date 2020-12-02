@@ -3,6 +3,8 @@ module.exports = {
         {
             name:'SteamDB-API',
             script:'src/index.mjs',
+            instances  : 'max',
+            exec_mode  : "cluster",
             env:{
                 PORT:3010,
                 REDIS_HOST:'localhost',
