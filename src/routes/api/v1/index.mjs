@@ -22,5 +22,8 @@ export default (fastify, options, next) => {
     fastify.register(import('./workshop/index.mjs'), {
         prefix: '/workshop'
     })
+    fastify.register(import('./steam/index.mjs'), {
+        prefix: '/steam'
+    })
     next()
 }
