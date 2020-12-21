@@ -19,7 +19,7 @@ module.exports = {
             ref:'origin/prod',
             repo:'git@github.com:SteamDB-API/api',
             path:'/root/node/steamdb/api',
-            'post-deploy':'npm i; pm2 startOrRestart ecosystem.config.js',
+            'post-deploy':'pnpm i; pm2 startOrRestart ecosystem.config.js',
         }
     }
 }
