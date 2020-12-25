@@ -68,6 +68,9 @@ fastify.register(import('fastify-static'), {
     serve: true,
     prefixAvoidTrailingSlash: true,
 })
+fastify.head('/',{schema:{hide:true}},(req,res)=>{
+    res.code(200).send()
+})
 fastify.get('/',{
     schema:{
         hide:true
